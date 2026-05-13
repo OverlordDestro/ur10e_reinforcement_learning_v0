@@ -1,0 +1,5 @@
+pip install gymnasium
+pip install gymnasium_robotics
+pip install numpy
+pip install matplotlib
+pip install stable_baselines3
