@@ -12,7 +12,7 @@ import ur10e
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv
 MAX_EPISODE_STEPS = 1000 #1000 simulation steps = 500 episode steps * 2 frame skip
-TOTAL_TIMESTEPS   = MAX_EPISODE_STEPS * 1000 #episodes * max_episode_steps
+TOTAL_TIMESTEPS   = MAX_EPISODE_STEPS * 2000 #episodes * max_episode_steps
 LOG_EVERY         = 10        # episodes between logged mean rewards
 CHECKPOINT_EVERY  = 40        # episodes between checkpoint saves
 
