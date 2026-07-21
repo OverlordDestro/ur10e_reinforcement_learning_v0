@@ -20,7 +20,7 @@ import torch
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv
 
-ALGORITHM = "PPO"      # Change to "PPO" when needed
+ALGORITHM = "SAC"      # Change to "PPO" when needed
 MAX_EPISODE_STEPS = 1000 #1000 simulation steps = 500 episode steps * 2 frame skip
 EPISODES = 10000 #number of episodes to run the evaluation for, EPISODES * MAX_EPISODE_STEPS = NUM_STEPS
 TOTAL_TIMESTEPS   = MAX_EPISODE_STEPS * EPISODES
@@ -31,34 +31,26 @@ TOTAL_TIMESTEPS   = MAX_EPISODE_STEPS * EPISODES
 LOG_EVERY         = 50        # episodes until logging results
 CHECKPOINT_EVERY  = 40        # episodes until checkpoint is saved
 #checkpoints will always be created every CHECKPOINT_EVERY episodes, but a final checkpoint will also be made at the end
-TRAIN_DEVICE      = "cuda" #set this to "cuda" or "cpu", cuda is far better and faster, but requires CUDA on your GPU
+TRAIN_DEVICE      = "cpu" #set this to "cuda" or "cpu", cuda is far better and faster, but requires CUDA on your GPU
                             #only use cpu if your GPU does not cupport CUDA or want to watch the simulation in real time
                             #older or non NVIDIA hardware is not supported by CUDA
 ENVIRONMENT = "UR10E-pgp-v0"     
-MODEL_SAVE = "ur10e_pgp_PPO" #name of the model to save, will be saved in the current working directory
-CHECKPOINT_SAVE = "ur10e_ppo_checkpoint" #name of the checkpoint, will be saved in the current working directory
-
-N_ENVIRONMENTS = 32 #number of parallel environments to run, more environments = faster training, but requires more VRAM
+MODEL_SAVE = "ur10e_pgp_SAC" #name of the model to save, will be saved in the current working directory
+CHECKPOINT_SAVE = "ur10e_pgp_checkpoint" #name of the checkpoint, will be saved in the current working directory
+N_ENVIRONMENTS = 1 #number of parallel environments to run, more environments = faster training, but requires more VRAM
 CHECKPOINT_EVERY = 100 #number of episodes until a checkpoint is saved, checkpoints are saved in the current working directory
 LOG_DIR = "./logs/" #for logging some info, can be removed if you want
 
-if TRAIN_DEVICE == "cuda" and not torch.cuda.is_available():
-    raise RuntimeError(
-        "ur10e_tester.py is configured for CUDA, but this Python environment has "
-        f"PyTorch {torch.__version__} with torch.cuda.is_available() == False. "
-        "Install a CUDA-enabled PyTorch build, then run the tester again."
-    )
-
 print(f"Training device: {TRAIN_DEVICE}")
 if TRAIN_DEVICE == "cuda":
-    print(f"CUDA device: {torch.cuda.get_device_name(0)}")
+    raise RuntimeError(f"Improper use of script, this script is ment for CPU but you are attempting to use it for GPU CUDA")
 elif TRAIN_DEVICE == "cpu":
-    raise RuntimeError(f"Improper use of script, this script is ment for GPU CUDA but you are attempting to use it for CPU")
+    print(f"Using CPU device")
 else:
     raise RuntimeError(f"Improper use of script, unknown training device")
 
 def make_env():
-    return gym.make(ENVIRONMENT, render_mode=None, max_episode_steps=MAX_EPISODE_STEPS)
+    return gym.make(ENVIRONMENT, render_mode="human", max_episode_steps=MAX_EPISODE_STEPS)
 
 class RewardLoggerCallback(BaseCallback): 
     def __init__(self, log_every=LOG_EVERY, checkpoint_every=CHECKPOINT_EVERY, n_envs=1):
@@ -193,7 +185,7 @@ if ALGORITHM == "SAC":
     model = SAC(
         "MultiInputPolicy", 
         env, 
-        use_sde=False,  # set to false since in my testing it caused worse learning
+        use_sde=True,  # set to false since in my testing it caused worse learning
         sde_sample_freq=4,  # sample a new noise value every 4 steps for smoother actions
         learning_starts=32000,  # 32 episodes for HER to collect enough transitions before learning starts
         buffer_size=500000,  # large buffer for better learning
@@ -202,7 +194,7 @@ if ALGORITHM == "SAC":
         tau=0.005,  # starndard tau
         device=TRAIN_DEVICE,    #keep on cuda for most cases, except for previously mentioned reasons, then set to cpu
         verbose=1,          #standard verbose
-        learning_rate=1e-3, # normally I set it to 1e-3 since I find it to learn 2x as fast while having just as good of a result as 3e-4 but you can probably get more stable results, but will take 2x as long
+        learning_rate=1e-3, # standard learning rate
         gamma=0.99,          # 0.99 to hopefully improve learning, anything less was slowing learning
         ent_coef="auto" #keep on auto unless you have a specific use case between stages
 

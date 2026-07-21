@@ -391,7 +391,8 @@
     <!-- Target object box-->
     <body name="object0" pos="0.025 0.525 0.025">
       <joint name="object0:joint" type="free" damping="0.01"/>
-      <geom size="0.025 0.025 0.025" type="box" condim="3" name="object0" material="UR10E_urblue" mass="2"/>
+      <geom size="0.025 0.025 0.025" type="box" condim="3" name="object0" material="UR10E_urblue"
+            mass="0.2" friction="1.2 0.02 0.001"/>
       <site name="object0" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"/>
     </body>
   </worldbody>
@@ -469,7 +470,7 @@
          forcerange="-5 5" ctrlrange="0 1"
          gainprm="80.0 0 0" biasprm="0 -100 -10"/>-->
     <general class="2f85" name="fingers_actuator" tendon="split"
-                forcerange="-5 5" ctrlrange="0 255"
+                forcerange="-80 80" ctrlrange="0 255"
                 gainprm="0.3137255 0 0" biasprm="0 -100 -10"/>
   </actuator>
 
