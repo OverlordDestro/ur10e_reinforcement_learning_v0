@@ -1,4 +1,4 @@
-# UR10e SAC HER SB3 GYM MuJoCo Reinforcement Learning
+# UR10e SAC SB3 GYM MuJoCo Reinforcement Learning
 
 Reinforcement learning for teaching a UR10e arm to learn and complete a **reach** task and a **pick and place** task.
 
