@@ -7,6 +7,7 @@ import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
 from stable_baselines3 import SAC, PPO
+from sb3_contrib import TQC
 import sys
 import os
 import torch
@@ -18,8 +19,8 @@ print("environment file imported")
 
 
 #variables for which algorithm and agent you want to use
-ALGORITHM = "SAC"      # Change to "PPO" when needed
-MODEL_PATH = "ur10e_pgp_SAC" #change to the trained model checkpoint
+ALGORITHM = "TQC"      # Change to "PPO" when needed
+MODEL_PATH = "ur10e_pgp_TQC" #change to the trained model checkpoint
 ENVIRONMENT = "UR10E-pgp-v0"  # Change to "UR10E-reach-v0" when needed
 NO_EARLY_TERMINATION = True  # Should the episode terminate on success or keep playing?
 MAX_EPISODE_STEPS = 500  # Maximum steps per episode, for CPU leave it at half your intended timesteps, for GPU set it to your intended timesteps
@@ -45,6 +46,9 @@ if ALGORITHM == "SAC":
 elif ALGORITHM == "PPO":
     model = PPO.load(MODEL_PATH, env=env, device="cpu")
     print("PPO model loaded from ", MODEL_PATH)
+elif ALGORITHM == "TQC":
+    model = TQC.load(MODEL_PATH, env=env, device="cpu")
+    print("TQC model loaded from ", MODEL_PATH)
 else:
     raise ValueError(f"Unknown algorithm: {ALGORITHM}")
 observation, info = env.reset(seed=42) 

@@ -9,6 +9,7 @@ import gymnasium_robotics
 import numpy as np
 import matplotlib.pyplot as plt
 from stable_baselines3 import SAC, PPO
+from sb3_contrib import TQC
 from stable_baselines3.common.monitor import Monitor
 import os
 
@@ -20,10 +21,10 @@ import torch
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv
 
-ALGORITHM = "PPO"      # Change to "PPO" when needed
-MAX_EPISODE_STEPS = 1000 #1000 simulation steps = 500 episode steps * 2 frame skip
-EPISODES = 10000 #number of episodes to run the evaluation for, EPISODES * MAX_EPISODE_STEPS = NUM_STEPS
-TOTAL_TIMESTEPS   = MAX_EPISODE_STEPS * EPISODES
+ALGORITHM = "PPO"      # Change to "PPO", "TQC" or "SAC"
+MAX_EPISODE_STEPS = 1000 # timesteps per episode
+EPISODES = 6000 #number of episodes to run
+TOTAL_TIMESTEPS   = MAX_EPISODE_STEPS * EPISODES # how long the the tester will run, it ends when it runs out of timesteps
 #EPISODES and TOTAL_TIMESTEPS arent a good metric for how many episodes will actually run, as the simulator will always
 #try to run TOTAL_TIMESTEPS, but if the simulation terminates/success before those MAX_EPISODE_STEPS are done
 #those timesteps will be unused and instead be given to the next episode, simulator runs until it reaches TOTAL_TIMESTEPS
@@ -34,9 +35,9 @@ CHECKPOINT_EVERY  = 40        # episodes until checkpoint is saved
 TRAIN_DEVICE      = "cuda" #set this to "cuda" or "cpu", cuda is far better and faster, but requires CUDA on your GPU
                             #only use cpu if your GPU does not cupport CUDA or want to watch the simulation in real time
                             #older or non NVIDIA hardware is not supported by CUDA
-ENVIRONMENT = "UR10E-pgp-v0"     
-MODEL_SAVE = "ur10e_pgp_PPO" #name of the model to save, will be saved in the current working directory
-CHECKPOINT_SAVE = "ur10e_ppo_checkpoint" #name of the checkpoint, will be saved in the current working directory
+ENVIRONMENT = "UR10E-reach-v0"     
+MODEL_SAVE = "ur10e_REACH_PPO" #name of the model to save, will be saved in the current working directory
+CHECKPOINT_SAVE = "ur10e_REACH_PPO_checkpoint" #name of the checkpoint, will be saved in the current working directory
 
 N_ENVIRONMENTS = 32 #number of parallel environments to run, more environments = faster training, but requires more VRAM
 CHECKPOINT_EVERY = 100 #number of episodes until a checkpoint is saved, checkpoints are saved in the current working directory
@@ -124,7 +125,17 @@ class RewardLoggerCallback(BaseCallback):
         plt.plot(x, self.ep_rew_means, color='steelblue')
         plt.xlabel("Episode")
         plt.ylabel(f"Mean reward (last {self.log_every} eps)")
-        plt.title("Total Reward — SAC+HER on UR10e")
+        
+
+        if ALGORITHM == "SAC":
+            plt.title("Total Reward — SAC on UR10e")
+        elif ALGORITHM == "TQC":
+            plt.title("Total Reward — TQC on UR10e")
+        elif ALGORITHM == "PPO":
+            plt.title("Total Reward — PPO on UR10e")
+        else:
+            print("algorithm not recognised, cant make reward plot")
+
         plt.grid(True)
         plt.tight_layout()
         plt.savefig("training_reward_total.png", dpi=150)
@@ -176,8 +187,14 @@ class RewardLoggerCallback(BaseCallback):
 
         for idx in range(n, len(axes)):
             axes[idx].set_visible(False)
-
-        fig.suptitle("Reward Components and Success Ratio — SAC+HER on UR10e", fontsize=14)
+        if ALGORITHM == "SAC":
+            fig.suptitle("Reward Components and Success Ratio — SAC on UR10e", fontsize=14)
+        elif ALGORITHM == "TQC":
+            fig.suptitle("Reward Components and Success Ratio — TQC on UR10e", fontsize=14)
+        elif ALGORITHM == "PPO":
+            fig.suptitle("Reward Components and Success Ratio — PPO on UR10e", fontsize=14)
+        else:
+            print("algorithm not recognised, cant make combined plot")
         plt.tight_layout()
         plt.savefig("training_reward_components.png", dpi=150)
         plt.show()
@@ -195,7 +212,7 @@ if ALGORITHM == "SAC":
         env, 
         use_sde=False,  # set to false since in my testing it caused worse learning
         sde_sample_freq=4,  # sample a new noise value every 4 steps for smoother actions
-        learning_starts=32000,  # 32 episodes for HER to collect enough transitions before learning starts
+        learning_starts=32000, #32 episodes before learning starts
         buffer_size=500000,  # large buffer for better learning
         batch_size=512,  # large batch size for better learning
         gradient_steps=1,  # update the model every step
@@ -206,6 +223,25 @@ if ALGORITHM == "SAC":
         gamma=0.99,          # 0.99 to hopefully improve learning, anything less was slowing learning
         ent_coef="auto" #keep on auto unless you have a specific use case between stages
 
+    )
+elif ALGORITHM == "TQC":
+    model = TQC(
+        "MultiInputPolicy",
+        env,
+        learning_rate=1e-3,
+        learning_starts=32000,
+        buffer_size=500000,
+        batch_size=512,
+        tau=0.005,
+        gamma=0.99,
+        train_freq=1,
+        gradient_steps=1,
+        ent_coef="auto",
+        use_sde=False,
+        sde_sample_freq=4,
+        top_quantiles_to_drop_per_net=2,
+        verbose=1,
+        device=TRAIN_DEVICE,
     )
 elif ALGORITHM == "PPO":#settings for PPO werent tested as much as SAC and havent been changed much from default
     model = PPO(
@@ -225,7 +261,7 @@ elif ALGORITHM == "PPO":#settings for PPO werent tested as much as SAC and haven
         verbose=1,
     )
 else:
-    raise ValueError(f"Unsupported algorithm: {ALGORITHM}. Choose 'SAC' or 'PPO'.")
+    raise ValueError(f"Unsupported algorithm: {ALGORITHM}. Choose 'SAC', 'PPO' or 'TQC'.")
 
 #starting simulations for training
 callback = RewardLoggerCallback(log_every=N_ENVIRONMENTS, checkpoint_every=CHECKPOINT_EVERY, n_envs=N_ENVIRONMENTS)

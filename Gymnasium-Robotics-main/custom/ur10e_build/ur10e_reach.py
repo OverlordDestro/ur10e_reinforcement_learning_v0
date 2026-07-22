@@ -170,7 +170,7 @@ class ur10eEnv(MujocoEnv, utils.EzPickle):
         ctrl = np.zeros(self.model.nu, dtype=np.float64)
         ctrl[:6] = desired_qpos
         ctrl[6] = 0.0
-
+        #in reach we don't really need the gripper so just keep it open for simplicity
         self.do_simulation(ctrl, self.frame_skip)
 
         # the gripper values don't go from 0 to 1, so we are normalizing it for easier learning and usage

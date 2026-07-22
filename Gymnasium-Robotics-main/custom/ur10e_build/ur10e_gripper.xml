@@ -7,8 +7,6 @@
       mesh/robotiq_2f85/   - 2F-85 .stl files
 
     The 2F-85 base body is parented directly to UR10E_flange.
-    The gripper Z-axis points away from the flange face, consistent
-    with the UR tool-flange convention.
 
     TCP site is offset 0.130 m along the flange Z-axis (past the
     gripper fingertip at full open).
@@ -39,9 +37,6 @@
 
   <statistic meansize="0.05"/>
 
-  <!-- ================================================================ -->
-  <!--  DEFAULTS                                                         -->
-  <!-- ================================================================ -->
   <default>
     <light castshadow="false"/>
     <general biastype="affine" biasprm="0 -1"/>
@@ -120,9 +115,7 @@
     </default>
   </default>
 
-  <!-- ================================================================ -->
-  <!--  ASSETS                                                           -->
-  <!-- ================================================================ -->
+
   <asset>
     <!-- Scene textures / materials -->
     <texture type="skybox" colorspace="auto" builtin="gradient"
@@ -177,9 +170,7 @@
     <mesh name="2f85_tongue"      file="robotiq_2f85/tongue.stl"/>
   </asset>
 
-  <!-- ================================================================ -->
-  <!--  WORLDBODY                                                        -->
-  <!-- ================================================================ -->
+
   <worldbody>
     <geom name="ground" size="0 0 1" type="plane" condim="1" material="matplane"/>
 
@@ -397,9 +388,7 @@
     </body>
   </worldbody>
 
-  <!-- ================================================================ -->
-  <!--  CONTACT EXCLUSIONS                                               -->
-  <!-- ================================================================ -->
+
   <contact>
     <!-- UR10E internal exclusions -->
     <exclude body1="UR10E_base_link"  body2="UR10E_upper_arm_link"/>
@@ -414,9 +403,7 @@
     <exclude body1="UR10E_flange"     body2="2f85_base"/>
   </contact>
 
-  <!-- ================================================================ -->
-  <!--  TENDONS                                                          -->
-  <!-- ================================================================ -->
+
   <tendon>
     <!--
       Force-splitting tendon: distributes actuator force equally between
@@ -428,9 +415,7 @@
     </fixed>
   </tendon>
 
-  <!-- ================================================================ -->
-  <!--  EQUALITY                                                         -->
-  <!-- ================================================================ -->
+
   <equality>
     <connect anchor="-0.0179014 -0.00651468 0.0044"
              body1="right_follower" body2="right_coupler"
@@ -442,9 +427,7 @@
            polycoef="0 1 0 0 0" solimp="0.95 0.99 0.001" solref="0.005 1"/>
   </equality>
 
-  <!-- ================================================================ -->
-  <!--  ACTUATORS                                                        -->
-  <!-- ================================================================ -->
+
   <actuator>
     <!-- UR10E joint position actuators (indices 0-5) -->
     <general name="UR10E_pos_shoulder_pan_joint"  class="UR10E_size4"        joint="UR10E_shoulder_pan_joint"/>
@@ -460,11 +443,11 @@
     -->
     <!--
     The general actuator below is a customized position actuator (with some damping) where
-    gainprm[0] != kp (see http://mujoco.org/book/modeling.html#position).
+    gainprm[0] != kp.
     The reason why gainprm[0] != kp is because the control input range has to be re-scaled to
-    [0, 255]. The joint range is currently set at [0, 0.8], the control range is [0, 255] and
-    kp = 100. Tau = Kp * scale * control_input - Kp * error, max(Kp * scale * control_input) = 0.8,
-    hence scale = 0.8 * 100 / 255, changed the range from 0 255 to 0 1
+    [0, 255]. The joint range is currently set at [0, 0.9], the control range is [0, 255] and
+    kp = 100. Tau = Kp * scale * control_input - Kp * error, max(Kp * scale * control_input) = 0.9,
+    hence scale = 0.9 * 100 / 255, changed the range from 0 255 to 0 1
   -->
     <!--<general class="2f85" name="fingers_actuator" tendon="split"
          forcerange="-5 5" ctrlrange="0 1"
@@ -474,9 +457,7 @@
                 gainprm="0.3137255 0 0" biasprm="0 -100 -10"/>
   </actuator>
 
-  <!-- ================================================================ -->
-  <!--  SENSORS                                                          -->
-  <!-- ================================================================ -->
+
   <sensor>
     <framepos    objtype="site" objname="UR10E_TCP" name="UR10E_pos"/>
     <framequat   objtype="site" objname="UR10E_TCP" name="UR10E_ori"/>
@@ -486,9 +467,7 @@
     <torque      site="UR10E_TCP" name="UR10E_torque" noise="0.5"/>
   </sensor>
 
-  <!-- ================================================================ -->
-  <!--  KEYFRAMES                                                        -->
-  <!-- ================================================================ -->
+
   <!--
     qpos:  6 arm joints + left_driver + left_spring_link + right_driver + right_spring_link
            (passive coupler/follower DOF are not in qpos)

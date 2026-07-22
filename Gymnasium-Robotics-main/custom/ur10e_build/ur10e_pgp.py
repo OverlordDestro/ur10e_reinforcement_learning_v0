@@ -162,8 +162,8 @@ class ur10eEnv(MujocoEnv, utils.EzPickle):
 
         ctrl = np.zeros(self.model.nu, dtype=np.float64)
         ctrl[:6] = desired_qpos
-        ctrl[6] = np.clip((gripper_signal + 1.0) * 0.5 * 255.0, 0.0, 255.0)
-
+        ctrl[6] = np.clip((gripper_signal + 1.0) * 0.5 * 255.0, 0.0, 255.0)#normalizing gripper signal to 0 - 1 since
+        #the xml handles gripper from 0-255 which complicates calculations, we instead opt to change the range to 0-1
         if self.stage < 2:
             distance = np.linalg.norm(self.data.site("UR10E_TCP").xpos - self.object0_pos)
         else:
@@ -349,7 +349,7 @@ class ur10eEnv(MujocoEnv, utils.EzPickle):
         object0_id = self.model.body("object0").id
         object0_jnt_adr = self.model.body_jntadr[object0_id]
 
-        #distance of the target from origin
+        #distance of the object from origin
         x = self.np_random.uniform(low=-0.4, high=0.4, size=1)
         y = self.np_random.uniform(low=0.6,  high=0.8, size=1)
         z = np.array([0.025])
@@ -359,7 +359,8 @@ class ur10eEnv(MujocoEnv, utils.EzPickle):
         half2 = yaw2 / 2.0
         object_quat = np.array([np.cos(half2), 0.0, 0.0, np.sin(half2)])
         
-        zt = np.array([0.1])
+        zt = np.array([0.2])#target z position
+
         self.goal = np.concatenate([x, y, zt])
         yaw  = self.np_random.uniform(0, 2 * np.pi)
         half = yaw / 2.0
