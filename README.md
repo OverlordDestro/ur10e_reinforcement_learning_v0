@@ -11,11 +11,16 @@ The subject is a **UR10e arm** with a **Robotiq 2F-85 gripper**.
 
 ## Collaboration
 
-This project was made in collaboration with the **"Jožef Stefan" Institute**.
+<table>
+<tr>
+<td align="center">
+<img src="Gymnasium-Robotics-main\gifs_images\IJS_logo_2.jpg" width="500"><br>
 
-![Logo of the Institute of "Jožef Stefan".](./Gymnasium-Robotics-main\gifs_images\IJS_logo_2.jpg)
+</tr>
+</table>
 
 ---
+
 ## About
 This project was created with the intent of assesing the appropriateness of MuJoCo to be used as a tool for further study of reinforcement learning. Within this project is supplied 2 examples of function: Reach, Pick&Place.
 This file contains information on the project and setup, provided are also README_PGP,README_REACH and README_EXAMPLES for further details. Provided scripts work with the intent of mainly being used with SAC but there are options to use TQC and PPO. 
