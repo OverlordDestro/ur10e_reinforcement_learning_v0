@@ -13,7 +13,7 @@ The subject is a **UR10e arm** with a **Robotiq 2F-85 gripper**.
 
 This project was made in collaboration with the **"Jožef Stefan" Institute**.
 
-![Logo of the Institute of "Jožef Stefan".](Gymnasium-Robotics-main\gifs_images\IJS_logo_2.jpg)
+![Logo of the Institute of "Jožef Stefan".](./Gymnasium-Robotics-main\gifs_images\IJS_logo_2.jpg)
 
 ---
 ## About
