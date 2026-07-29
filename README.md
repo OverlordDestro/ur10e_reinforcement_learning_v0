@@ -2,7 +2,7 @@
 
 Reinforcement learning for teaching a UR10e arm to learn and complete a **reach** task and a **pick and place** task.
 
-This project uses SAC/PPO/TQC, curriculum learning, Gymnasium-Robotics, and Stable-Baselines3 within the MuJoCo simulator.
+This project uses SAC/PPO/TQC, Task decomposition, Gymnasium-Robotics, and Stable-Baselines3 within the MuJoCo simulator.
 
 The subject is a **UR10e arm** with a **Robotiq 2F-85 gripper**.
 

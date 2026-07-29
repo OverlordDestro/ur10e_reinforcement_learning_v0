@@ -18,7 +18,7 @@ These values describe the observation space for Pick and Place
 | 18–20 | TCP Z-axis | 3 | Z-axis column of the TCP rotation matrix (flange pointing direction) |
 | 21–23 | Object position | 3 | XYZ world position of `object0` |
 | 24–32 | Object rotation | 9 | Full 3×3 rotation matrix of `object0` (row-major flattened) |
-| 33 | Stage | 1 | Current curriculum stage (0–2) |
+| 33 | Stage | 1 | Current hierarchy stage (0–2) |
 
 
 ## Achieved Goal — 3 dimensions
@@ -48,7 +48,7 @@ The desired goal changes between stages to help guide the agent
 >3-5 was used for rotation but became obsolete, reserved for any future implementations
 ---
 
-## 3-Stage Curriculum
+## 3-Stage Hierarchy
 
 The task is broken into three sequential stages. The agent must satisfy a condition at each stage before advancing. Stage transitions are rewarded with a bonus.
 
