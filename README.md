@@ -48,7 +48,14 @@ The project used three computers for training, using either CPU or CUDA. CUDA is
 | PC 3 | Intel i5 | NVIDIA RTX 3070 | CUDA | 16 GiB | Windows 10 |
 
 ---
+## Quick where can I find the important files?
 
+All the important training, loading and environment scripts are located in 
+Gymnasium-Robotics-main/custom/ur10e_build
+
+All the models and pngs will appear in Gymnasium-Robotics-main
+
+---
 ## Dependencies
 The dependencies included within the table and their version have been used within this project.
 
