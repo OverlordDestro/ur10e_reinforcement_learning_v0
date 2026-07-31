@@ -162,7 +162,7 @@ make shure to check settings and change them to your test as always
 Open `ur10e_loader.py` and ensure the correct checkpoint name is loaded:
 
 ```python
-MODEL_PATH = "ur10e_pgp_TQC"
+MODEL_PATH = "ur10e_pgp_SAC"
 ```
 
 Then run:
