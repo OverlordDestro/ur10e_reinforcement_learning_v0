@@ -42,7 +42,7 @@ SAC Reach
 SAC P&P
 </tr>
 </table>
-The repository also contains already trained models which can be inspected with the ur10e_loader.py. The models results are detailed in README_EXAMPLES to compare if they are working as intended for you.
+The repository contains already trained models which can be inspected with the ur10e_loader.py. The models results are detailed in README_EXAMPLES to compare if they are working as intended for you.
 
 The project used three computers for training, using either CPU or CUDA. CUDA is strongly advised for faster training.
 
