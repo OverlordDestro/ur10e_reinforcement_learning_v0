@@ -19,8 +19,8 @@ print("environment file imported")
 
 
 #variables for which algorithm and agent you want to use
-ALGORITHM = "TQC"      # Change to "PPO" when needed
-MODEL_PATH = "ur10e_pgp_TQC" #change to the trained model checkpoint
+ALGORITHM = "SAC"      # Change to "PPO" when needed
+MODEL_PATH = "ur10e_pgp_SAC" #change to the trained model checkpoint
 ENVIRONMENT = "UR10E-pgp-v0"  # Change to "UR10E-reach-v0" when needed
 NO_EARLY_TERMINATION = True  # Should the episode terminate on success or keep playing?
 MAX_EPISODE_STEPS = 500  # Maximum steps per episode, for CPU leave it at half your intended timesteps, for GPU set it to your intended timesteps
